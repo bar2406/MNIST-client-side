@@ -37,7 +37,7 @@ def extractInputs(dataset,indices):
     :param indices: desired indices to comput
     :return: spliced dataset
     '''
-    sub1,sub2=chainer.datasets.split_dataset(dataset,2000)
+    sub1,sub2=chainer.datasets.split_dataset(dataset,500)
     return sub1
 
 def downloadData(dataSetUrl):
@@ -89,7 +89,11 @@ def deviceTrain(NeuralNet,computSet):
     # chainer.serializers.load_npz(True, trainer)
 
     # Run the training
+    #trainer.extend(extensions.snapshot(filename=path+"trainedNeuralNet"))
+    chainer.serializers.save_npz(path+'pre',NeuralNet)
     trainer.run()
+    chainer.serializers.save_npz(path+'post',NeuralNet)
+
     return NeuralNet
 
 def deviceValidate(NeuralNet, computSet):
@@ -99,7 +103,7 @@ def deviceValidate(NeuralNet, computSet):
     :param computSet: dataset to validate with
     :return: accuracy in percent
     '''
-    return accuracy
+    return 0.5
 
 def calcDelta(originalNeuralNet,trainedNeuralNet):
     '''
@@ -108,4 +112,8 @@ def calcDelta(originalNeuralNet,trainedNeuralNet):
     :param trainedNeuralNet: neural network after training
     :return: basically elementwise trainedNeuralNet - originalNeuralNet
     '''
-    return 1
+    #chainer.serializers.save_npz(path+"originalNeuralNet",originalNeuralNet)
+    #chainer.serializers.save_npz(path+"trainedNeuralNet",trainedNeuralNet)
+    o=np.load(path+"pre")
+    t=np.load(path+"post")
+    return t['predictor/l3/W']-o['predictor/l3/W']  #TODO - of course this is not all

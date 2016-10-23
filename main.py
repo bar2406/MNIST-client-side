@@ -70,8 +70,9 @@ def main():
     #computing
     if isTrain:
         originalNeuralNet=NeuralNet
-        NeuralNet=deviceTrain(NeuralNet,computSet)
-        computedResult=calcDelta(originalNeuralNet,NeuralNet)
+        trainedNeuralNet=deviceTrain(NeuralNet,computSet)
+        #trainedNeuralNet=np.load(trainedNeuralNetPath)
+        computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
     else :
         computedResult=deviceValidate(NeuralNet,computSet)
 
@@ -79,10 +80,12 @@ def main():
     #postData
     ####################################################################
 
-    numpy.savez(path+"postData", deviceID=deviceId,epochNumber=epochNumber,computingTime="not now",computedResult=computedResult)
-    response = FileResponse(open(path+"postData", 'rb'))
-    response['Content-Disposition'] = 'attachment; filename=Data.npz'
-    return response
+    #np.savez(path+"postData", deviceID=deviceId,epochNumber=epochNumber,computingTime="not now",computedResult=computedResult)
+    data={ 'deviceId':str(deviceId), 'epochNumber':str(epochNumber), 'computingTime':"not now",'computedResult':computedResult}
+    rq.post(url + "postData", data=data)
+    #response = FileResponse(open(path+"postData", 'rb'))
+    #response['Content-Disposition'] = 'attachment; filename=Data.npz'
+    return
 
 if __name__ == '__main__':
     main()
