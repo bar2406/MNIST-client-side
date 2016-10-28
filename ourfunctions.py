@@ -6,6 +6,7 @@ import chainer.functions as F
 import chainer.links as L
 from chainer import training
 from chainer.training import extensions
+
 import colorama
 colorama.init()
 import chainer.computational_graph as c
@@ -13,7 +14,7 @@ import numpy as np
 import requests as rq
 
 path = "C:\\temp\\"  # TODO - need to change to android path
-
+#path=r"storage/emulated/0/Download/"    #android path
 
 # Network definition
 class MLP(chainer.Chain):
@@ -37,7 +38,12 @@ def extractInputs(dataset,indices):
     :param indices: desired indices to comput
     :return: spliced dataset
     '''
-    sub1,sub2=chainer.datasets.split_dataset(dataset,500)
+    order = list(range(dataset._length))
+    temp = sorted(indices)
+    for i in temp[::-1]:
+        del order[i]
+    order = list(indices) + order
+    sub1=chainer.datasets.SubDataset(dataset,0,len(indices),order=order)
     return sub1
 
 def downloadData(dataSetUrl):
@@ -46,6 +52,7 @@ def downloadData(dataSetUrl):
     :param dataSetUrl: url to download dataset from
     :return: return trainset, testset
     '''
+
     train, test=chainer.datasets.get_mnist()  # TODO - using urls from our server. maybe testing how long it actually takes to download from original site
     return train, test
 
@@ -60,8 +67,7 @@ def deviceTrain(NeuralNet,computSet):
     optimizer.setup(NeuralNet)
 
     # Load the MNIST dataset
-    train_iter = chainer.iterators.SerialIterator(computSet, len(
-        computSet[1]))  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
+    train_iter = chainer.iterators.SerialIterator(computSet, len(computSet[1]))  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
 
     # Set up a trainer
     updater = training.StandardUpdater(train_iter, optimizer)
@@ -103,17 +109,20 @@ def deviceValidate(NeuralNet, computSet):
     :param computSet: dataset to validate with
     :return: accuracy in percent
     '''
-    return 0.5
+    train_iter = chainer.iterators.SerialIterator(computSet,computSet._size)  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
+    return chainer.training.extensions.Evaluator(train_iter,NeuralNet)
 
-def calcDelta(originalNeuralNet,trainedNeuralNet):
+
+def calcDelta(originalNeuralNet,trainedNeuralNet):  #TODO - relay less on files and more on arguments
     '''
 
     :param originalNeuralNet: neural network before training
     :param trainedNeuralNet: neural network after training
     :return: basically elementwise trainedNeuralNet - originalNeuralNet
     '''
-    #chainer.serializers.save_npz(path+"originalNeuralNet",originalNeuralNet)
-    #chainer.serializers.save_npz(path+"trainedNeuralNet",trainedNeuralNet)
     o=np.load(path+"pre")
     t=np.load(path+"post")
-    return t['predictor/l3/W']-o['predictor/l3/W']  #TODO - of course this is not all
+    delta=dict(t)
+    for f in o.files:
+        delta[f]=t[f]-o[f]
+    return delta    #TODO - probably the most arab thing in the world. Heineken

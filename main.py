@@ -19,6 +19,7 @@ import datetime
 
 def main():
     path="C:\\temp\\"	#TODO - need to change to android path
+    #path=r"storage/emulated/0/Download/"    #android path
     '''parser = argparse.ArgumentParser(description='Chainer example: MNIST')
     parser.add_argument('--IP', '-i', type=str, default="127.0.0.1",
                         help='server IP address')
@@ -38,7 +39,7 @@ def main():
     train, test = downloadData(dataSetUrl)
 
 	
-    #some kind of a loop
+    #TODO - some kind of a loop
 
     ####################################################################
     #getNeuralNet
@@ -82,6 +83,7 @@ def main():
 
     #np.savez(path+"postData", deviceID=deviceId,epochNumber=epochNumber,computingTime="not now",computedResult=computedResult)
     data={ 'deviceId':str(deviceId), 'epochNumber':str(epochNumber), 'computingTime':"not now",'computedResult':computedResult}
+    #np.savez(path+"postData", deviceId=str(deviceId), epochNumber=str(epochNumber), computingTime="not now",computedResult=computedResult)
     rq.post(url + "postData", data=data)
     #response = FileResponse(open(path+"postData", 'rb'))
     #response['Content-Disposition'] = 'attachment; filename=Data.npz'
