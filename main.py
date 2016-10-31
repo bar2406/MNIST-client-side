@@ -14,12 +14,13 @@ import numpy as np
 import requests as rq
 from ourfunctions import *
 import datetime
+import json
 
 
 
 def main():
     path="C:\\temp\\"	#TODO - need to change to android path
-    #path=r"storage/emulated/0/Download/"    #android path
+    #path=r"storage/emulated/0/Download/MNISTDist/"    #android path TODO - maybe need to create the MNISTDist directory
     '''parser = argparse.ArgumentParser(description='Chainer example: MNIST')
     parser.add_argument('--IP', '-i', type=str, default="127.0.0.1",
                         help='server IP address')
@@ -84,7 +85,7 @@ def main():
     #np.savez(path+"postData", deviceID=deviceId,epochNumber=epochNumber,computingTime="not now",computedResult=computedResult)
     data={ 'deviceId':str(deviceId), 'epochNumber':str(epochNumber), 'computingTime':"not now",'computedResult':computedResult}
     #np.savez(path+"postData", deviceId=str(deviceId), epochNumber=str(epochNumber), computingTime="not now",computedResult=computedResult)
-    rq.post(url + "postData", data=data)
+    rq.post(url + "postData", data=json.dumps(data))
     #response = FileResponse(open(path+"postData", 'rb'))
     #response['Content-Disposition'] = 'attachment; filename=Data.npz'
     return

@@ -125,4 +125,5 @@ def calcDelta(originalNeuralNet,trainedNeuralNet):  #TODO - relay less on files 
     delta=dict(t)
     for f in o.files:
         delta[f]=t[f]-o[f]
+        delta[f]=delta[f].tolist()
     return delta    #TODO - probably the most arab thing in the world. Heineken
