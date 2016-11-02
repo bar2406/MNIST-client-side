@@ -7,14 +7,14 @@ import chainer.links as L
 from chainer import training
 from chainer.training import extensions
 
-import colorama
-colorama.init()
+#import colorama
+#colorama.init()
 import chainer.computational_graph as c
 import numpy as np
 import requests as rq
 
-path = "C:\\temp\\"  # TODO - need to change to android path
-#path=r"storage/emulated/0/Download/"    #android path
+#path = "C:\\temp\\"  # TODO - need to change to android path
+path=r"storage/emulated/0/Download/chainer"    #android path
 
 # Network definition
 class MLP(chainer.Chain):
