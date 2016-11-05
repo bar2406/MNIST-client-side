@@ -7,27 +7,30 @@ import chainer.functions as F
 import chainer.links as L
 from chainer import training
 from chainer.training import extensions
-import colorama
-colorama.init()
 import chainer.computational_graph as c
 import numpy as np
 import requests as rq
 from ourfunctions import *
 import datetime
 import json
-
+import os
+import platform
 
 
 def main():
-    path="C:\\temp\\"	#TODO - need to change to android path
-    #path=r"storage/emulated/0/Download/"    #android path TODO - maybe need to create the MNISTDist directory
+    if platform.system()=='Windows':
+        import colorama
+        colorama.init()
+        path=os.getcwd()+"\\files4runtime\\"
+    if platform.system()=='Linux':  #aka android
+        path=r"storage/emulated/0/Download/"    #TODO - maybe need to create the MNISTDist directory
     '''parser = argparse.ArgumentParser(description='Chainer example: MNIST')
     parser.add_argument('--IP', '-i', type=str, default="127.0.0.1",
                         help='server IP address')
     parser.add_argument('--port', '-p', type=str, default="8000",
                         help='server port')'''
 
-    url= r"http://192.168.1.3:8000/MNIST/"
+    url= r"http://127.0.0.1:8000/MNIST/"
     ####################################################################
     #imalive
     ####################################################################
@@ -35,9 +38,33 @@ def main():
     result=rq.post(url+"imalive",data=device_model)
     deviceId = result.text.split()[1]#TODO - more robust parsing
     dataSetUrl=result.text.split()[3]#TODO - more robust parsing
-	
-    #downloading dataset
-    #chainer.dataset.set_dataset_root("/sdcard/download")
+
+
+    #create datasets directory
+    try:
+        os.makedirs(path+r'pfnet\chainer\mnist')
+    except:
+        #do nothing
+        print("something")  #TODO - this shouldn't be here... errors come up when this is deleted
+    ####################################################################
+	#getTrainSet
+    #####################################################################
+    if not os.path.isfile(path + r'pfnet\chainer\mnist' + r"\train.npz"):
+        result = rq.post(url + "getTrainSet", data=device_model)
+        with open(path+r'pfnet\chainer\mnist' + r"\train.npz", 'wb') as fd:
+            for chunk in result.iter_content(10):
+                fd.write(chunk)
+
+    ####################################################################
+    # getTestSet
+    ####################################################################
+    if not os.path.isfile(path+r'pfnet\chainer\mnist' + r"\test.npz"):
+        result = rq.post(url + "getTestSet", data=device_model)
+        with open(path+r'pfnet\chainer\mnist' + r"\test.npz", 'wb') as fd:
+            for chunk in result.iter_content(10):
+                fd.write(chunk)
+
+    chainer.dataset.set_dataset_root(path)
     train, test = downloadData(dataSetUrl)
 
 
