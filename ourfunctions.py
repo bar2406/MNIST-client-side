@@ -113,19 +113,19 @@ def deviceValidate(NeuralNet, computSet):
     :param computSet: dataset to validate with
     :return: accuracy in percent
     '''
-    optimizer = chainer.optimizers.Adam()
-    optimizer.setup(NeuralNet)
-    test_iter = chainer.iterators.SerialIterator(computSet,computSet._size)  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
+    #optimizer = chainer.optimizers.Adam()
+    #optimizer.setup(NeuralNet)
+    test_iter = chainer.iterators.SerialIterator(computSet,computSet._size,repeat=False)  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
 
-    updater = training.StandardUpdater(test_iter, optimizer)
+    '''updater = training.StandardUpdater(test_iter, optimizer)
     trainer = training.Trainer(updater, (1, 'epoch'), out=path + "ValResult.npz")
 
     # Evaluate the model with the test dataset for each epoch
     trainer.extend(extensions.Evaluator(test_iter, NeuralNet))
     test=trainer.run()
-
-    return chainer.training.extensions.Evaluator(train_iter, NeuralNet)
-
+'''
+    eval = extensions.Evaluator(test_iter, NeuralNet)
+    return eval()['main/accuracy']
 
 def calcDelta(originalNeuralNet,trainedNeuralNet):  #TODO - relay less on files and more on arguments
     '''

@@ -13,7 +13,7 @@ import requests as rq
 from ourfunctions import *
 import datetime
 import json
-import os
+import os,stat
 import platform
 
 
@@ -29,6 +29,12 @@ def main():
                         help='server IP address')
     parser.add_argument('--port', '-p', type=str, default="8000",
                         help='server port')'''
+    print("hi\n"+path+"\nbye")
+    try:
+        os.makedirs(path)
+    except:
+        pass
+        #do nothing
 
     url= r"http://127.0.0.1:8000/MNIST/"
     ####################################################################
@@ -44,8 +50,7 @@ def main():
     try:
         os.makedirs(path+r'pfnet\chainer\mnist')
     except:
-        #do nothing
-        print("something")  #TODO - this shouldn't be here... errors come up when this is deleted
+        pass
     ####################################################################
 	#getTrainSet
     #####################################################################
@@ -80,6 +85,7 @@ def main():
                 fd.write(chunk)
         NeuralNet=L.Classifier(MLP(784, 10, 10))
         chainer.serializers.load_npz(path+"getNeuralNet.npz",NeuralNet)
+
         ####################################################################
         #getData
         ####################################################################
@@ -105,6 +111,7 @@ def main():
             #trainedNeuralNet=np.load(trainedNeuralNetPath)
             computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
         else :
+
             computedResult=deviceValidate(NeuralNet,computSet)
 
         ####################################################################
