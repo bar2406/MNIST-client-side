@@ -113,17 +113,7 @@ def deviceValidate(NeuralNet, computSet):
     :param computSet: dataset to validate with
     :return: accuracy in percent
     '''
-    #optimizer = chainer.optimizers.Adam()
-    #optimizer.setup(NeuralNet)
     test_iter = chainer.iterators.SerialIterator(computSet,computSet._size,repeat=False)  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
-
-    '''updater = training.StandardUpdater(test_iter, optimizer)
-    trainer = training.Trainer(updater, (1, 'epoch'), out=path + "ValResult.npz")
-
-    # Evaluate the model with the test dataset for each epoch
-    trainer.extend(extensions.Evaluator(test_iter, NeuralNet))
-    test=trainer.run()
-'''
     eval = extensions.Evaluator(test_iter, NeuralNet)
     return eval()['main/accuracy']
 

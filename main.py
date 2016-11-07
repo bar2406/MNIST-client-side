@@ -40,7 +40,7 @@ def main():
     ####################################################################
     #imalive
     ####################################################################
-    device_model="bar computer"		#TODO - acually getting device model, i.e Sony Xperia Z3 compact
+    device_model="bar computer 1"		#TODO - acually getting device model, i.e Sony Xperia Z3 compact
     result=rq.post(url+"imalive",data=device_model)
     deviceId = result.text.split()[1]#TODO - more robust parsing
     dataSetUrl=result.text.split()[3]#TODO - more robust parsing
