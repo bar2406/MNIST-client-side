@@ -7,15 +7,19 @@ import chainer.links as L
 from chainer import training
 from chainer.training import extensions
 
-#import colorama
-#colorama.init()
+import platform
 import chainer.computational_graph as c
 import numpy as np
 import requests as rq
+import os
+#path=r"storage/emulated/0/Download/"    #android path
 
-#path = "C:\\temp\\"  # TODO - need to change to android path
-path=r"storage/emulated/0/Download/chainer"    #android path
-
+if platform.system() == 'Windows':
+    import colorama
+    colorama.init()
+    path = os.getcwd() + "\\files4runtime\\"
+if platform.system() == 'Linux':  # aka android
+    path = r"storage/emulated/0/Download/"  # TODO - maybe need to create the MNISTDist directory
 # Network definition
 class MLP(chainer.Chain):
 
@@ -109,9 +113,9 @@ def deviceValidate(NeuralNet, computSet):
     :param computSet: dataset to validate with
     :return: accuracy in percent
     '''
-    train_iter = chainer.iterators.SerialIterator(computSet,computSet._size)  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
-    return chainer.training.extensions.Evaluator(train_iter,NeuralNet)
-
+    test_iter = chainer.iterators.SerialIterator(computSet,computSet._size,repeat=False)  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
+    eval = extensions.Evaluator(test_iter, NeuralNet)
+    return eval()['main/accuracy']
 
 def calcDelta(originalNeuralNet,trainedNeuralNet):  #TODO - relay less on files and more on arguments
     '''
