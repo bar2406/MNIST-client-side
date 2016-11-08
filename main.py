@@ -7,6 +7,11 @@ import chainer.functions as F
 import chainer.links as L
 from chainer import training
 from chainer.training import extensions
+<<<<<<< HEAD
+=======
+#import colorama
+#colorama.init()
+>>>>>>> origin/master
 import chainer.computational_graph as c
 import numpy as np
 import requests as rq
@@ -18,12 +23,17 @@ import platform
 
 
 def main():
+<<<<<<< HEAD
     if platform.system()=='Windows':
         import colorama
         colorama.init()
         path=os.getcwd()+"\\files4runtime\\"
     if platform.system()=='Linux':  #aka android
         path=r"storage/emulated/0/Download/"    #TODO - maybe need to create the MNISTDist directory
+=======
+    #path="C:\\temp\\"	#TODO - need to change to android path
+    path=r"storage/emulated/0/Download/chainer"    #android path TODO - maybe need to create the MNISTDist directory
+>>>>>>> origin/master
     '''parser = argparse.ArgumentParser(description='Chainer example: MNIST')
     parser.add_argument('--IP', '-i', type=str, default="127.0.0.1",
                         help='server IP address')
@@ -40,6 +50,7 @@ def main():
     ####################################################################
     #imalive
     ####################################################################
+<<<<<<< HEAD
     device_model="bar computer 1"		#TODO - acually getting device model, i.e Sony Xperia Z3 compact
     result=rq.post(url+"imalive",data=device_model)
     deviceId = result.text.split()[1]#TODO - more robust parsing
@@ -70,6 +81,15 @@ def main():
                 fd.write(chunk)
 
     chainer.dataset.set_dataset_root(path)
+=======
+    device_model="noam phone"		#TODO - acually getting device model, i.e Sony Xperia Z3 compact
+    result=rq.post(url+"imalive",data=device_model)
+    deviceId = result.text.split()[1]#TODO - more robust parsing
+    dataSetUrl=result.text.split()[3]#TODO - more robust parsing
+	
+    #downloading dataset
+    chainer.dataset.set_dataset_root("/sdcard/download/chainer")
+>>>>>>> origin/master
     train, test = downloadData(dataSetUrl)
 
 
