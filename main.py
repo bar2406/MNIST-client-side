@@ -44,6 +44,7 @@ def main():
     device_model="bar computer 1"		#TODO - acually getting device model, i.e Sony Xperia Z3 compact
     result=rq.post(url+"imalive",data=device_model)
     if result.status_code!=200 :
+        raise RuntimeError("error 47: response code isn't 200")
     deviceId = result.text.split()[1]#TODO - more robust parsing
     dataSetUrl=result.text.split()[3]#TODO - more robust parsing
 
@@ -59,6 +60,7 @@ def main():
     if not os.path.isfile(path + r'pfnet\chainer\mnist' + r"\train.npz"):
         result = rq.post(url + "getTrainSet", data=device_model)
         if result.status_code != 200:
+            raise RuntimeError("error 63: response code isn't 200")
         with open(path+r'pfnet\chainer\mnist' + r"\train.npz", 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
@@ -69,6 +71,7 @@ def main():
     if not os.path.isfile(path+r'pfnet\chainer\mnist' + r"\test.npz"):
         result = rq.post(url + "getTestSet", data=device_model)
         if result.status_code != 200:
+            raise RuntimeError("error 74: response code isn't 200")
         with open(path+r'pfnet\chainer\mnist' + r"\test.npz", 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
@@ -85,6 +88,7 @@ def main():
         ####################################################################
         result=rq.post(url+"getNeuralNet",data=device_model)
         if result.status_code != 200:
+            raise RuntimeError("error 91: response code isn't 200")
         with open(path+"getNeuralNet.npz", 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
@@ -96,6 +100,7 @@ def main():
         ####################################################################
         result=rq.post(url+"getData",data=deviceId)
         if result.status_code != 200:
+            raise RuntimeError("error 103: response code isn't 200")
         with open(path+"getData.npz", 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
