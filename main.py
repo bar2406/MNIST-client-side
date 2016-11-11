@@ -30,6 +30,7 @@ def main():
                         help='server IP address')
     parser.add_argument('--port', '-p', type=str, default="8000",
                         help='server port')'''
+    dataset_root=os.path.join(path,"pfnet","chainer","mnist")
     print("hi\n"+path+"\nbye")
     try:
         os.makedirs(path)
@@ -51,13 +52,13 @@ def main():
 
     #create datasets directory
     try:
-        os.makedirs(path+r'pfnet\chainer\mnist')    #TODO - in android, directory seperator is / and not \ maybe windows can accept both?
+        os.makedirs(dataset_root)    #TODO - in android, directory seperator is / and not \ maybe windows can accept both?
     except:
         pass
     ####################################################################
 	#getTrainSet
     #####################################################################
-    if not os.path.isfile(path + r'pfnet\chainer\mnist' + r"\train.npz"):
+    if not os.path.isfile(os.path.join(dataset_root,"train.npz")):
         result = rq.post(url + "getTrainSet", data=device_model)
         if result.status_code != 200:
             raise RuntimeError("error 63: response code isn't 200")
@@ -68,7 +69,7 @@ def main():
     ####################################################################
     # getTestSet
     ####################################################################
-    if not os.path.isfile(path+r'pfnet\chainer\mnist' + r"\test.npz"):
+    if not os.path.isfile(os.path.join(dataset_root,"test.npz")):
         result = rq.post(url + "getTestSet", data=device_model)
         if result.status_code != 200:
             raise RuntimeError("error 74: response code isn't 200")
@@ -89,7 +90,7 @@ def main():
         result=rq.post(url+"getNeuralNet",data=device_model)
         if result.status_code != 200:
             raise RuntimeError("error 91: response code isn't 200")
-        with open(path+"getNeuralNet.npz", 'wb') as fd:
+        with open(os.path.join(path,"getNeuralNet.npz"), 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
         NeuralNet=L.Classifier(MLP(784, 10, 10))
@@ -101,7 +102,7 @@ def main():
         result=rq.post(url+"getData",data=deviceId)
         if result.status_code != 200:
             raise RuntimeError("error 103: response code isn't 200")
-        with open(path+"getData.npz", 'wb') as fd:
+        with open(os.path.join(path,"getData.npz"), 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
         temp=np.load(path+"getData.npz")
