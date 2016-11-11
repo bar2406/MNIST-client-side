@@ -43,13 +43,14 @@ def main():
     ####################################################################
     device_model="bar computer 1"		#TODO - acually getting device model, i.e Sony Xperia Z3 compact
     result=rq.post(url+"imalive",data=device_model)
+    if result.status_code!=200 :
     deviceId = result.text.split()[1]#TODO - more robust parsing
     dataSetUrl=result.text.split()[3]#TODO - more robust parsing
 
 
     #create datasets directory
     try:
-        os.makedirs(path+r'pfnet\chainer\mnist')
+        os.makedirs(path+r'pfnet\chainer\mnist')    #TODO - in android, directory seperator is / and not \ maybe windows can accept both?
     except:
         pass
     ####################################################################
@@ -57,6 +58,7 @@ def main():
     #####################################################################
     if not os.path.isfile(path + r'pfnet\chainer\mnist' + r"\train.npz"):
         result = rq.post(url + "getTrainSet", data=device_model)
+        if result.status_code != 200:
         with open(path+r'pfnet\chainer\mnist' + r"\train.npz", 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
@@ -66,6 +68,7 @@ def main():
     ####################################################################
     if not os.path.isfile(path+r'pfnet\chainer\mnist' + r"\test.npz"):
         result = rq.post(url + "getTestSet", data=device_model)
+        if result.status_code != 200:
         with open(path+r'pfnet\chainer\mnist' + r"\test.npz", 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
@@ -81,6 +84,7 @@ def main():
         #getNeuralNet
         ####################################################################
         result=rq.post(url+"getNeuralNet",data=device_model)
+        if result.status_code != 200:
         with open(path+"getNeuralNet.npz", 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
@@ -91,6 +95,7 @@ def main():
         #getData
         ####################################################################
         result=rq.post(url+"getData",data=deviceId)
+        if result.status_code != 200:
         with open(path+"getData.npz", 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
