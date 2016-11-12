@@ -24,7 +24,7 @@ def main():
         colorama.init()
         path=os.getcwd()+"\\files4runtime\\"
     if platform.system()=='Linux':  #aka android
-        path=r"storage/emulated/0/Download/"    #TODO - maybe need to create the MNISTDist directory
+        path=r"storage/emulated/0/Download/files4runtime/"    #TODO - maybe need to create the MNISTDist directory
     '''parser = argparse.ArgumentParser(description='Chainer example: MNIST')
     parser.add_argument('--IP', '-i', type=str, default="127.0.0.1",
                         help='server IP address')
@@ -32,17 +32,18 @@ def main():
                         help='server port')'''
     dataset_root=os.path.join(path,"pfnet","chainer","mnist")
     print("hi\n"+path+"\nbye")
-    try:
-        os.makedirs(path)
-    except:
-        pass
-        #do nothing
+    if not os.path.exists(path):
+        try:
+            original_umask = os.umask(0)
+            os.makedirs(path)
+        finally:
+            os.umask(original_umask)
 
-    url= r"http://127.0.0.1:8000/MNIST/"
+    url= r"http://192.168.1.5:8000/MNIST/"
     ####################################################################
     #imalive
     ####################################################################
-    device_model="bar computer 1"		#TODO - acually getting device model, i.e Sony Xperia Z3 compact
+    device_model="bar phone"		#TODO - acually getting device model, i.e Sony Xperia Z3 compact
     result=rq.post(url+"imalive",data=device_model)
     if result.status_code!=200 :
         raise RuntimeError("error 47: response code isn't 200")
@@ -51,10 +52,12 @@ def main():
 
 
     #create datasets directory
-    try:
-        os.makedirs(dataset_root)    #TODO - in android, directory seperator is / and not \ maybe windows can accept both?
-    except:
-        pass
+    if not os.path.exists(dataset_root):
+        try:
+            original_umask = os.umask(0)
+            os.makedirs(dataset_root)
+        finally:
+            os.umask(original_umask)
     ####################################################################
 	#getTrainSet
     #####################################################################
@@ -62,7 +65,7 @@ def main():
         result = rq.post(url + "getTrainSet", data=device_model)
         if result.status_code != 200:
             raise RuntimeError("error 63: response code isn't 200")
-        with open(path+r'pfnet\chainer\mnist' + r"\train.npz", 'wb') as fd:
+        with open(os.path.join(dataset_root,"train.npz"), 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
 
@@ -73,7 +76,7 @@ def main():
         result = rq.post(url + "getTestSet", data=device_model)
         if result.status_code != 200:
             raise RuntimeError("error 74: response code isn't 200")
-        with open(path+r'pfnet\chainer\mnist' + r"\test.npz", 'wb') as fd:
+        with open(os.path.join(dataset_root,"test.npz"), 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
 
