@@ -1,5 +1,4 @@
 from __future__ import print_function
-import argparse
 
 import chainer
 import chainer.functions as F
@@ -8,19 +7,16 @@ from chainer import training
 from chainer.training import extensions
 
 import platform
-import chainer.computational_graph as c
 import numpy as np
-import requests as rq
 import os
-#path=r"storage/emulated/0/Download/"    #android path
 
-
-if platform.system() == 'Windows':
+if platform.system() == 'Windows':  # for testing and debug on pc, path is different from android
     import colorama
     colorama.init()
     path = os.getcwd() + "\\files4runtime\\"
 if platform.system() == 'Linux':  # aka android
-    path = r"storage/emulated/0/Download/"  # TODO - maybe need to create the MNISTDist directory
+    path = r"storage/emulated/0/Download/files4runtime/"  # any directory with r\w permissions will do
+
 # Network definition
 class MLP(chainer.Chain):
 
@@ -72,7 +68,7 @@ def deviceTrain(NeuralNet,computSet):
     optimizer.setup(NeuralNet)
 
     # Load the MNIST dataset
-    train_iter = chainer.iterators.SerialIterator(computSet, len(computSet[1]))  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
+    train_iter = chainer.iterators.SerialIterator(computSet, len(computSet[1]))
 
     # Set up a trainer
     updater = training.StandardUpdater(train_iter, optimizer)
@@ -114,11 +110,11 @@ def deviceValidate(NeuralNet, computSet):
     :param computSet: dataset to validate with
     :return: accuracy in percent
     '''
-    test_iter = chainer.iterators.SerialIterator(computSet,computSet._size,repeat=False)  # TODO - make sure that len(computSet)=len(subsetDataForDevice)
+    test_iter = chainer.iterators.SerialIterator(computSet,computSet._size,repeat=False)
     eval = extensions.Evaluator(test_iter, NeuralNet)
     return eval()['main/accuracy']
 
-def calcDelta(originalNeuralNet,trainedNeuralNet):  #TODO - relay less on files and more on arguments
+def calcDelta(originalNeuralNet,trainedNeuralNet):
     '''
 
     :param originalNeuralNet: neural network before training
@@ -131,4 +127,4 @@ def calcDelta(originalNeuralNet,trainedNeuralNet):  #TODO - relay less on files 
     for f in o.files:
         delta[f]=t[f]-o[f]
         delta[f]=delta[f].tolist()
-    return delta    #TODO - probably the most arab thing in the world. Heineken
+    return delta
