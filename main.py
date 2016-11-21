@@ -25,7 +25,7 @@ def main():
         finally:
             os.umask(original_umask)
 
-    url= r"http://192.168.1.5:8123/MNIST/"
+    url= r"http://127.0.0.1:8000/MNIST/"
     ####################################################################
     #imalive
     ####################################################################
@@ -34,7 +34,7 @@ def main():
     if result.status_code!=200 :
         raise RuntimeError("error 47: response code isn't 200")
     deviceId = result.text.split()[1]
-    dataSetUrl=result.text.split()[3]
+    dataSetUrl=None #result.text.split()[3] - if we want to download from somewhere else, right now it's not in use
 
 
     #create datasets directory
@@ -115,7 +115,7 @@ def main():
         ####################################################################
         #postData
         ####################################################################
-        data={ 'deviceId':str(deviceId),'miniBatchID':str(minibatchID), 'epochNumber':str(epochNumber), 'computingTime':"not now",'computedResult':computedResult}
+        data={ 'deviceId':str(deviceId),'miniBatchID':str(minibatchID), 'epochNumber':str(epochNumber), 'computingTime':"not now",'computedResult':computedResult} #TODO - maybe ssend computing time
         rq.post(url + "postData", data=json.dumps(data))
 
     return
