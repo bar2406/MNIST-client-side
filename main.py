@@ -103,9 +103,9 @@ def main():
 
         computSet=extractInputs(train,subsetDataForDevice)
 
-
         #computing
         if isTrain:
+            NeuralNet.cleargrads()
             originalNeuralNet=NeuralNet
             trainedNeuralNet=deviceTrain(NeuralNet,computSet)
             computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
@@ -115,7 +115,7 @@ def main():
         ####################################################################
         #postData
         ####################################################################
-        data={ 'deviceId':str(deviceId),'miniBatchID':str(minibatchID), 'epochNumber':str(epochNumber), 'computingTime':"not now",'computedResult':computedResult} #TODO - maybe ssend computing time
+        data={ 'deviceId':str(deviceId),'miniBatchID':str(minibatchID), 'epochNumber':str(epochNumber), 'computingTime':"not now",'computedResult':computedResult} #TODO - maybe send computing time
         rq.post(url + "postData", data=json.dumps(data))
 
     return
