@@ -56,7 +56,7 @@ def downloadData(dataSetUrl):
     :return: return trainset, testset
     '''
 
-    train, test = chainer.datasets.get_mnist()  # TODO - using urls from our server. maybe testing how long it actually takes to download from original site
+    train, test = chainer.datasets.get_mnist()
     return train, test
 
 
@@ -66,12 +66,20 @@ def deviceTrain(NeuralNet, computSet):
     :param computSet: dataset to train on
     :return: trained neural network model
     '''
+	##changable constans:
+	LEARN_RATE = 0.01
+	optimizer = chainer.optimizers.SGD(LEARN_RATE) ##Also the optimizer is changable
+	LOCAL_BATCH_SIZE = 100
+	
+	####################################################################
+	
+	
     # Setup an optimizer
-    optimizer = chainer.optimizers.SGD()
+    # optimizer = chainer.optimizers.SGD()
     optimizer.setup(NeuralNet)
 
     # Load the MNIST dataset
-    train_iter = chainer.iterators.SerialIterator(computSet, 1000, repeat=False, shuffle=False)
+    train_iter = chainer.iterators.SerialIterator(computSet, LOCAL_BATCH_SIZE, repeat=False, shuffle=False)
 
     # Set up a trainer
     updater = training.StandardUpdater(train_iter, optimizer)
@@ -103,6 +111,8 @@ def deviceTrain(NeuralNet, computSet):
     trainer.run()
     print("accuracy: " + str(deviceValidate(NeuralNet, computSet)))
     chainer.serializers.save_npz(path + 'post', NeuralNet)
+    with open(path + "test.txt", "a") as myfile:
+        myfile.write( str(deviceValidate(NeuralNet, computSet))+"\n")
 
     return NeuralNet
 

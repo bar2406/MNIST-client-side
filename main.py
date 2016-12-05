@@ -9,6 +9,12 @@ import platform
 
 
 def main():
+	##changable constans:
+	MIDDLE_LAYER_SIZE = 300
+	
+	
+	####################################################################
+
     if platform.system()=='Windows':    #for testing and debug on pc, path is different from android
         import colorama
         colorama.init()
@@ -83,7 +89,7 @@ def main():
         with open(os.path.join(path,"getNeuralNet.npz"), 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
-        NeuralNet=L.Classifier(MLP(784, 300, 10))   #network size must be the same as defined in the server TODO - maybe get net size from server
+        NeuralNet=L.Classifier(MLP(784, MIDDLE_LAYER_SIZE, 10))   #network size must be the same as defined in the server TODO - maybe get net size from server
         chainer.serializers.load_npz(path+"getNeuralNet.npz",NeuralNet)
 
         ####################################################################
