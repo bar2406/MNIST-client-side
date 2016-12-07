@@ -111,7 +111,7 @@ def main():
 
         #computing
         if isTrain:
-            NeuralNet.cleargrads()
+            #NeuralNet.cleargrads()
             originalNeuralNet=NeuralNet
             trainedNeuralNet=deviceTrain(NeuralNet,computSet)
             computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
