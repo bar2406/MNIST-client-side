@@ -77,8 +77,7 @@ def main():
     train, test = downloadData(dataSetUrl)
 
 
-    #TODO - some kind of stopping condition
-    while(True):
+    while (True): #Runs until the server says no more missions
 
         ####################################################################
         #getNeuralNet
@@ -106,17 +105,28 @@ def main():
         minibatchID=			temp['minibatchID']
         epochNumber=			temp['epochNumber']
         subsetDataForDevice=	temp['subsetDataForDevice']
+        isTestset=              temp['isTestset']
+        isFinished=             temp['isFinished']
+
+        if isFinished:
+            print ("No more missions from the server, bye bye")
+            return #Finished to run, stop program
 
         computSet=extractInputs(train,subsetDataForDevice)
-
-        #computing
-        if isTrain:
-            #NeuralNet.cleargrads()
-            originalNeuralNet=NeuralNet
-            trainedNeuralNet=deviceTrain(NeuralNet,computSet)
-            computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
-        else :
+        if isTestset: #Testing the network
+            computSet=extractInputs(test,subsetDataForDevice)
             computedResult=deviceValidate(NeuralNet,computSet)
+        else:
+            if isTrain: #Training the network
+                #NeuralNet.cleargrads()
+                originalNeuralNet=NeuralNet
+                trainedNeuralNet=deviceTrain(NeuralNet,computSet)
+                computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
+            else : #Validating the network
+                computedResult=deviceValidate(NeuralNet,computSet)
+
+
+
 
         ####################################################################
         #postData
