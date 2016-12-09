@@ -107,17 +107,15 @@ def main():
         epochNumber=			temp['epochNumber']
         subsetDataForDevice=	temp['subsetDataForDevice']
 
-        
+        computSet=extractInputs(train,subsetDataForDevice)
 
         #computing
         if isTrain:
             #NeuralNet.cleargrads()
-            computSet=extractInputs(train,subsetDataForDevice)
             originalNeuralNet=NeuralNet
             trainedNeuralNet=deviceTrain(NeuralNet,computSet)
             computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
         else :
-            computSet=extractInputs(test,subsetDataForDevice)
             computedResult=deviceValidate(NeuralNet,computSet)
 
         ####################################################################
