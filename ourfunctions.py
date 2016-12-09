@@ -67,9 +67,9 @@ def deviceTrain(NeuralNet, computSet):
     :return: trained neural network model
     '''
 	##changable constans:
-	LEARN_RATE = 0.01
-	optimizer = chainer.optimizers.SGD(LEARN_RATE) ##Also the optimizer is changable
-	LOCAL_BATCH_SIZE = 100
+    LEARN_RATE = 0.01
+    optimizer = chainer.optimizers.SGD(LEARN_RATE) ##Also the optimizer is changable
+    LOCAL_BATCH_SIZE = 100
 	
 	####################################################################
 	

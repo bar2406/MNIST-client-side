@@ -10,7 +10,7 @@ import platform
 
 def main():
 	##changable constans:
-	MIDDLE_LAYER_SIZE = 300
+    MIDDLE_LAYER_SIZE = 300
 	
 	
 	####################################################################
