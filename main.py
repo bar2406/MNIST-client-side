@@ -35,7 +35,7 @@ def main():
     ####################################################################
     #imalive
     ####################################################################
-    device_model="bar phone"		#TODO -change for each device (any alias name, doesn't have to be unique)
+    device_model="bar PC"		#TODO -change for each device (any alias name, doesn't have to be unique)
     result=rq.post(url+"imalive",data=device_model)
     if result.status_code!=200 :
         raise RuntimeError("error 47: response code isn't 200")
@@ -125,7 +125,7 @@ def main():
                 computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
             else : #Validating the network
                 computedResult=deviceValidate(NeuralNet,computSet)
-            computingTime=datetime.datetime.now()-computingTime
+        computingTime=datetime.datetime.now()-computingTime
 
 
 
