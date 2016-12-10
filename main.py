@@ -6,7 +6,7 @@ from ourfunctions import *
 import json
 import os
 import platform
-
+import datetime
 
 def main():
 	##changable constans:
@@ -113,6 +113,7 @@ def main():
             return #Finished to run, stop program
 
         computSet=extractInputs(train,subsetDataForDevice)
+        computingTime=datetime.datetime.now()
         if isTestset: #Testing the network
             computSet=extractInputs(test,subsetDataForDevice)
             computedResult=deviceValidate(NeuralNet,computSet)
@@ -124,6 +125,7 @@ def main():
                 computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
             else : #Validating the network
                 computedResult=deviceValidate(NeuralNet,computSet)
+            computingTime=datetime.datetime.now()-computingTime
 
 
 
@@ -131,7 +133,7 @@ def main():
         ####################################################################
         #postData
         ####################################################################
-        data={ 'deviceId':str(deviceId),'miniBatchID':str(minibatchID), 'epochNumber':str(epochNumber), 'computingTime':"not now",'computedResult':computedResult} #TODO - maybe send computing time
+        data={ 'deviceId':str(deviceId),'miniBatchID':str(minibatchID), 'epochNumber':str(epochNumber), 'computingTime':str(computingTime.total_seconds()),'computedResult':computedResult,'accuracy':str(deviceValidate(NeuralNet, computSet))} #TODO - maybe send computing time
         rq.post(url + "postData", data=json.dumps(data))
 
     return

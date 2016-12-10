@@ -109,10 +109,8 @@ def deviceTrain(NeuralNet, computSet):
     # Run the training
     chainer.serializers.save_npz(path + 'pre', NeuralNet)
     trainer.run()
-    print("accuracy: " + str(deviceValidate(NeuralNet, computSet)))
     chainer.serializers.save_npz(path + 'post', NeuralNet)
-    with open(path + "test.txt", "a") as myfile:
-        myfile.write( str(deviceValidate(NeuralNet, computSet))+"\n")
+
 
     return NeuralNet
 
