@@ -10,7 +10,7 @@ import datetime
 
 def main():
 	##changable constans:
-    MIDDLE_LAYER_SIZE = 300
+    MIDDLE_LAYER_SIZE = 100
 	
 	
 	####################################################################
@@ -31,11 +31,11 @@ def main():
         finally:
             os.umask(original_umask)
 
-    url= r"http://127.0.0.1:8000/MNIST/"
+    url= r"http://192.168.65.221:8000/MNIST/"
     ####################################################################
     #imalive
     ####################################################################
-    device_model="bar PC"		#TODO -change for each device (any alias name, doesn't have to be unique)
+    device_model="bar phone"		#TODO -change for each device (any alias name, doesn't have to be unique)
     result=rq.post(url+"imalive",data=device_model)
     if result.status_code!=200 :
         raise RuntimeError("error 47: response code isn't 200")
@@ -82,6 +82,7 @@ def main():
         ####################################################################
         #getNeuralNet
         ####################################################################
+        time_delta=datetime.datetime.now()
         result=rq.post(url+"getNeuralNet",data=device_model)
         if result.status_code != 200:
             raise RuntimeError("error 91: response code isn't 200")
@@ -90,16 +91,20 @@ def main():
                 fd.write(chunk)
         NeuralNet=L.Classifier(MLP(784, MIDDLE_LAYER_SIZE, 10))   #network size must be the same as defined in the server TODO - maybe get net size from server
         chainer.serializers.load_npz(path+"getNeuralNet.npz",NeuralNet)
-
+        time_delta=datetime.datetime.now()-time_delta
+        print("getNeuralNet time:   "+str(time_delta.total_seconds()))
         ####################################################################
         #getData
         ####################################################################
+        time_delta=datetime.datetime.now()
         result=rq.post(url+"getData",data=deviceId)
         if result.status_code != 200:
             raise RuntimeError("error 103: response code isn't 200")
         with open(os.path.join(path,"getData.npz"), 'wb') as fd:
             for chunk in result.iter_content(10):
                 fd.write(chunk)
+        time_delta=datetime.datetime.now()-time_delta
+        print("getData time:        "+str(time_delta.total_seconds()))
         temp=np.load(path+"getData.npz")
         isTrain=				temp['isTrain']
         minibatchID=			temp['minibatchID']
@@ -123,18 +128,23 @@ def main():
                 originalNeuralNet=NeuralNet
                 trainedNeuralNet=deviceTrain(NeuralNet,computSet)
                 computedResult=calcDelta(originalNeuralNet,trainedNeuralNet)
+                computingTime = datetime.datetime.now() - computingTime
+                print("computing train time:    " + str(computingTime.total_seconds()))
             else : #Validating the network
                 computedResult=deviceValidate(NeuralNet,computSet)
-        computingTime=datetime.datetime.now()-computingTime
-
+                computingTime=datetime.datetime.now()-computingTime
+                print("computing test time:     "+str(computingTime.total_seconds()))
 
 
 
         ####################################################################
         #postData
         ####################################################################
+        time_delta=datetime.datetime.now()
         data={ 'deviceId':str(deviceId),'miniBatchID':str(minibatchID), 'epochNumber':str(epochNumber), 'computingTime':str(computingTime.total_seconds()),'computedResult':computedResult,'accuracy':str(deviceValidate(NeuralNet, computSet))} #TODO - maybe send computing time
         rq.post(url + "postData", data=json.dumps(data))
+        time_delta=datetime.datetime.now()-time_delta
+        print("postData time:        "+str(time_delta.total_seconds()))
 
     return
 
