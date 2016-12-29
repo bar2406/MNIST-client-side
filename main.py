@@ -31,11 +31,11 @@ def main():
         finally:
             os.umask(original_umask)
 
-    url= r"http://192.168.65.221:8000/MNIST/"
+    url= r"http://192.168.1.8:8123/MNIST/"
     ####################################################################
     #imalive
     ####################################################################
-    device_model="bar phone"		#TODO -change for each device (any alias name, doesn't have to be unique)
+    device_model="Galaxy j716"		#TODO -change for each device (any alias name, doesn't have to be unique)
     result=rq.post(url+"imalive",data=device_model)
     if result.status_code!=200 :
         raise RuntimeError("error 47: response code isn't 200")
@@ -122,6 +122,8 @@ def main():
         if isTestset: #Testing the network
             computSet=extractInputs(test,subsetDataForDevice)
             computedResult=deviceValidate(NeuralNet,computSet)
+            computingTime = datetime.datetime.now() - computingTime
+            print("computing test time:    " + str(computingTime.total_seconds()))
         else:
             if isTrain: #Training the network
                 #NeuralNet.cleargrads()
